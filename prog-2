@@ -1,0 +1,81 @@
+#include <stdio.h>
+#define MAX 10
+
+int adj[MAX][MAX], tree[MAX][2], n;
+
+void readmatrix() {
+    int i, j;
+    printf("\nEnter the number of nodes in the Graph: ");
+    scanf("%d", &n);
+
+    printf("\nEnter the adjacency matrix of the Graph:\n");
+    for (i = 1; i <= n; i++) {
+        for (j = 1; j <= n; j++) {
+            scanf("%d", &adj[i][j]);
+        }
+    }
+}
+
+int spanningtree(int src) {
+    int visited[MAX], d[MAX], parent[MAX];
+    int i, j, k = 1, min, u, v, cost = 0;
+
+    for (i = 1; i <= n; i++) {
+        d[i] = adj[src][i];
+        visited[i] = 0;
+        parent[i] = src;
+    }
+
+    visited[src] = 1;
+
+    for (i = 1; i < n; i++) {
+        min = 9999;
+        u = -1;
+
+        for (j = 1; j <= n; j++) {
+            if (!visited[j] && d[j] < min) {
+                min = d[j];
+                u = j;
+            }
+        }
+
+        visited[u] = 1;
+        cost += d[u];
+
+        tree[k][0] = parent[u];
+        tree[k][1] = u;
+        k++;
+
+        for (v = 1; v <= n; v++) {
+            if (!visited[v] && adj[u][v] < d[v]) {
+                d[v] = adj[u][v];
+                parent[v] = u;
+            }
+        }
+    }
+
+    return cost;
+}
+
+void display(int cost) {
+    int i;
+    printf("\nThe Edges of the Minimum Spanning Tree are:\n");
+    for (i = 1; i < n; i++) {
+        printf("%d -> %d\n", tree[i][0], tree[i][1]);
+    }
+    printf("\nThe total cost of the Minimum Spanning Tree is: %d\n", cost);
+}
+
+int main() {
+    int source, treecost;
+
+    readmatrix();
+
+    printf("\nEnter the source vertex: ");
+    scanf("%d", &source);
+
+    treecost = spanningtree(source);
+    display(treecost);
+
+    return 0;
+}
